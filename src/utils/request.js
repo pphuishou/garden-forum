@@ -20,8 +20,6 @@ instance.interceptors.request.use(function(config) {
 });
 
 instance.interceptors.response.use((response) => {
-  console.log(response, 'response');
-  
   return response.data;
 }, (error) => {
   let res = error.response;

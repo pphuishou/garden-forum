@@ -27,3 +27,19 @@ export function reqUploadImage(data) {
   })
 }
 
+// 获取文章列表
+export function reqArticleList(params) {
+  return request({
+    url: '/mp/articles',
+    method: 'GET',
+    params
+  })
+}
+// 删除单条数据
+export function reqdDelItem(id) {
+  return request({
+    url: `/mp/articles/${id}`,
+    method: 'delete',
+
+  })
+}

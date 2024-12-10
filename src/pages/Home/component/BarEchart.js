@@ -4,7 +4,9 @@ import * as echarts from "echarts";
 
 export default function BarEchart({ title }) {
   const chartRef = useRef(null);
-  useEffect(() => {
+
+  // 图表初始化
+  const initChart = () => {
     let chartDom = chartRef.current;
     let myChart = echarts.init(chartDom);
     let option;
@@ -29,6 +31,9 @@ export default function BarEchart({ title }) {
     };
 
     option && myChart.setOption(option);
+  }
+  useEffect(() => {
+    initChart();
   }, []);
   return <div ref={chartRef} style={{width: '500px', height: '400px'}}></div>;
 }

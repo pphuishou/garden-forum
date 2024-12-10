@@ -27,6 +27,7 @@ const Publish = () => {
   
   const [ imageCount, setImageCount ] = useState(1);
   const [ imageFile, setImageFile ] = useState();
+  const [loading, setLoading] = useState(false);
 
   const formFinish = (value) => {
     const { title, content, channel_id } = value;
@@ -47,9 +48,7 @@ const Publish = () => {
     setImageCount(target.value)
   }
 
-  const [loading, setLoading] = useState(false);
   const handleChange = (info) => {
-    console.log('正在上传中',info);
     setImageFile(info.fileList);
   };
   const uploadButton = (
