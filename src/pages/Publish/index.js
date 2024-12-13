@@ -15,9 +15,10 @@ import { Link } from "react-router-dom";
 import "./index.scss";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { reqAddArticle } from "@/apis/article";
+import { reqAddArticle, reqArticleDetail } from "@/apis/article";
 import { useState, useEffect } from "react";
 import { useChannel } from "@/hooks/useChannel";
+import { useLocation } from 'react-router-dom'
 
 const { Option } = Select;
 
@@ -25,6 +26,9 @@ const Publish = () => {
   // useHook 
   const { channelList } = useChannel();
   
+  const $location = useLocation();
+  // 设置form表单回填
+  const [ form ] = Form.useForm();
   const [ imageCount, setImageCount ] = useState(1);
   const [ imageFile, setImageFile ] = useState();
   const [loading, setLoading] = useState(false);
@@ -45,12 +49,17 @@ const Publish = () => {
   };
   // 选择图片数量
   const handleImageCount = ({target}) => {
-    setImageCount(target.value)
+    setImageCount(target.value);
   }
 
   const handleChange = (info) => {
     setImageFile(info.fileList);
   };
+  // 获取文章详情
+  const getArticle = async (id) => {
+    const result = await reqArticleDetail(id);
+    form.setFieldValue(result.data);
+  }
   const uploadButton = (
     <button
       style={{
@@ -69,11 +78,17 @@ const Publish = () => {
       </div>
     </button>
   );
-
+  let id = $location.state?.id  || "";
   useEffect(() => {
     // const channelList = useChannel()
     // getChannelList();
-  }, []);
+    
+    async function getArticle (id) {
+      const result = await reqArticleDetail(id);
+      form.setFieldValue(result.data);
+    }
+    getArticle(id)
+  }, [id, form]);
   return (
     <div className="publish">
       <Card
@@ -87,6 +102,7 @@ const Publish = () => {
         }
       >
         <Form
+          form={form}
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 16 }}
           initialValues={{ type: 1 }}

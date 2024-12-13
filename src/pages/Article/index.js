@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useChannel } from "@/hooks/useChannel";
 import { reqArticleList, reqdDelItem } from '@/apis/article';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
@@ -30,6 +30,8 @@ const { RangePicker } = DatePicker;
 dayjs.locale("zh-cn");
 
 const Article = () => {
+  const navigate = useNavigate();
+
   const { channelList } = useChannel();
   // 文章列表
   const [ articleList, setArticleList ] = useState([])
@@ -60,7 +62,7 @@ const Article = () => {
   // 表格中tag字典
   const statusMap = {
     1: <Tag color="warning">待审核</Tag>,
-    2: <Tag color="success">已通过</Tag>,
+    2: <Tag color="success">已通过</Tag>
   }
   // 确认删除数据
   const handleDelete = async ({id}) => {
@@ -70,6 +72,15 @@ const Article = () => {
   // 切换页面
   const handlePageChange = (page) => {
     setPageCurrent(page)
+  }
+  // 修改数据
+  const handleEdit = ({id}) => {
+    /**
+     * 这种路由间传递参数的方式，在目标组件中使用useLocation拿到
+     * 另一种navigate(`/publish?id=${id}`)，在目标组件中使用const searchParams = useSearchParams()
+     * const id = searchParams.get('id) 拿到
+     */ 
+    navigate('/publish',{state: {id}})
   }
   // 配置分页器
   const pagination = {
@@ -126,13 +137,13 @@ const Article = () => {
     {
       title: '操作',
       key: 'id',
-      render: (id) => (
+      render: (row) => (
         <Space size="middle">
-          <Button type="primary" shape="circle" icon={<EditOutlined />}></Button>
+          <Button type="primary" shape="circle" icon={<EditOutlined />} onClick={() => handleEdit(row)}></Button>
           <Popconfirm
             title="删除确认"
             description="确定删除这条数据吗？"
-            onConfirm={() => handleDelete(id)}
+            onConfirm={() => handleDelete(row)}
             okText="确认"
             cancelText="取消"
           >
@@ -157,37 +168,41 @@ const Article = () => {
       <Breadcrumb
         items={[{ title: <Link to={"/"}>首页</Link> }, { title: "文章列表" }]}
       />
-      <Form layout="inline" onFinish={handleFormValue}>
-        <Form.Item name="statue" label="状态">
-          <Radio.Group>
-            <Radio value=""> 全部 </Radio>
-            <Radio value="0"> 草稿 </Radio>
-            <Radio value="2"> 审核通过 </Radio>
-          </Radio.Group>
-        </Form.Item>
-        <Form.Item name="channel_id" label="频道">
-          <Select style={{ width: "100px" }}> 
-            {channelList.map((item) => {
-              return (
-                <Select.Option key={item.id} value={item.id}>
-                  {item.name}
-                </Select.Option>
-              );
-            })}
-          </Select>
-        </Form.Item>
-        
-        <ConfigProvider locale={locale}>
-          <Form.Item name="date" label="日期">
-            <RangePicker />
+      <Space  direction="vertical" size="middle" style={{ display: 'flex' }}>
+        <Form layout="inline" onFinish={handleFormValue} >
+          <Form.Item name="statue" label="状态">
+            <Radio.Group>
+              <Radio value=""> 全部 </Radio>
+              <Radio value="0"> 草稿 </Radio>
+              <Radio value="2"> 审核通过 </Radio>
+            </Radio.Group>
           </Form.Item>
-        </ConfigProvider>
-        
-        <Form.Item>
-          <Button htmlType="submit" type="primary">筛选</Button>
-        </Form.Item>
-      </Form>
-      <Table columns={columns} dataSource={articleList} pagination={pagination}  />
+          <Form.Item name="channel_id" label="频道">
+            <Select style={{ width: "100px" }}> 
+              {channelList.map((item) => {
+                return (
+                  <Select.Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Select.Option>
+                );
+              })}
+            </Select>
+          </Form.Item>
+          
+          <ConfigProvider locale={locale}>
+            <Form.Item name="date" label="日期">
+              <RangePicker />
+            </Form.Item>
+          </ConfigProvider>
+          
+          <Form.Item>
+            <Button htmlType="submit" type="primary">筛选</Button>
+          </Form.Item>
+          
+        </Form>
+      
+        <Table columns={columns} dataSource={articleList} pagination={pagination} rowKey="id" />
+      </Space>
     </Card>
   );
 };

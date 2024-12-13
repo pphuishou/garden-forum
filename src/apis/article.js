@@ -43,3 +43,11 @@ export function reqdDelItem(id) {
 
   })
 }
+// 获取文章详情
+export function reqArticleDetail(target) {
+  return request({
+    method: 'GET',
+    url: `/mp/articles/${target}`,
+  })
+}
+
