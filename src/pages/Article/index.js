@@ -22,7 +22,8 @@ import {
   Table,
   Image,
   Popconfirm,
-  message
+  message,
+  Input
 } from "antd";
 const { RangePicker } = DatePicker;
 
@@ -31,7 +32,7 @@ dayjs.locale("zh-cn");
 
 const Article = () => {
   const navigate = useNavigate();
-
+  const [form] = Form.useForm();
   const { channelList } = useChannel();
   // 文章列表
   const [ articleList, setArticleList ] = useState([])
@@ -48,6 +49,11 @@ const Article = () => {
     page: 1,
     per_page: 10
   })
+  const onFill = () => {
+    form.setFieldsValue({
+      note: 'Hello world!',
+    });
+  };
   // 获取筛选条件数据
   const handleFormValue = (value) => {
     const { statue, channel_id, date } = value;
@@ -169,7 +175,7 @@ const Article = () => {
         items={[{ title: <Link to={"/"}>首页</Link> }, { title: "文章列表" }]}
       />
       <Space  direction="vertical" size="middle" style={{ display: 'flex' }}>
-        <Form layout="inline" onFinish={handleFormValue} >
+        <Form layout="inline" onFinish={handleFormValue} form={form} >
           <Form.Item name="statue" label="状态">
             <Radio.Group>
               <Radio value=""> 全部 </Radio>

@@ -50,4 +50,12 @@ export function reqArticleDetail(target) {
     url: `/mp/articles/${target}`,
   })
 }
+// 编辑文章
+export function reqUpdateArticle(data) {
+  return request({
+    method: 'PUT',
+    url: `/mp/articles/${data.id}`,
+    data
+  })
+}
 
